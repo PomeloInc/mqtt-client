@@ -28,7 +28,6 @@ def main():
     try:
         for i in range(0, 5):
             client.publish(topic, "Hello from BBB!")
-            print('Hello World')
             sleep(0.5)
     except BaseException as berr:
         print(berr)
