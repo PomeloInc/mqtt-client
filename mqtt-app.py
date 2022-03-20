@@ -32,7 +32,7 @@ def main():
     """ Main program """
 
     print("Starting Pomelo-MQTT-Client")
-
+    print("Hello Bitbake")
     # setup client
     cfg = read_config("config_default.json")
     topic_reg = cfg['topic_general'] + '/' + cfg['topic_reg']
