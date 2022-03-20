@@ -7,19 +7,21 @@ import paho.mqtt.client as mqtt
 import random
 import os
 import socket
+import logging
 import time
-
-# def on_connect(client, userdata, flags, rc):
-# def publish(client):
-# def subscribe(client: mqtt_client):
-# def on_message(client, userdata, msg):
-# def on_message(client, userdata, msg):
 
 # static stuff
 broker_url = "test.mosquitto.org"
 broker_port = 1883  
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 topic = "/pomelo/client_1"
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
+    client.publish(topic, "Hello from " + os.getlogin() + "@" + socket.gethostname())
+
+def on_publish(client, userdata, msg):
+    print("published message")
 
 def main():
     """ Main program """
@@ -30,10 +32,15 @@ def main():
     try:
         
         client = mqtt.Client(client_id=client_id)
-        client.connect(broker_url, broker_port)
+        client.on_connect = on_connect
+        client.on_publish = on_publish
+    except BaseException as berr:
+        print(berr)
 
-        # client.publish(topic="TestingTopic", payload="TestingPayload", qos=0, retain=False)
-        # print("Sucessfully connected")
+    # connect
+    try:
+        client.connect(broker_url, broker_port)
+        client.loop_start()
     except BaseException as berr:
         print(berr)
 
@@ -45,20 +52,16 @@ def main():
     except BaseException as berr:
         print(berr)
 
+    sleep(2)
+
     # disconnect
     client.disconnect()
+    client.loop_stop()
 
     # end
     print("exiting..")
-
     return 0
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.publish(topic, "Hello from " + os.getlogin() + "@" + socket.gethostname())
-
-def on_message(client, userdata, msg):
-    print("published message")
 
 if __name__ == "__main__":
     main()
