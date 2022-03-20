@@ -1,62 +1,80 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
+
 from time import sleep
 import paho.mqtt.client as mqtt
 import random
 import os
 import socket
 import logging
-import time
 
-# static stuff
-broker_url = "test.mosquitto.org"
-broker_port = 1883  
-client_id = f'python-mqtt-{random.randint(0, 1000)}'
-topic = "/pomelo/client_1"
+import json
+import time
+import sys
+
+topic_reg = ''
+topic_data = ''
 
 def on_connect(client, userdata, flags, rc):
+    '''TODO: documentation'''
     print("Connected with result code "+str(rc))
-    client.publish(topic, "Hello from " + os.getlogin() + "@" + socket.gethostname())
+    client.publish(client.topic_reg, "Hello from " + os.getlogin() + "@" + socket.gethostname())
 
 def on_publish(client, userdata, msg):
-    print("published message")
+    '''TODO: documentation'''
+    print("DEBUG: published message")
+
+def read_config(path):
+    '''TODO: documentation'''
+    with open(path, encoding='UTF-8') as file:
+        cfg = json.load(file)
+    return cfg
 
 def main():
     """ Main program """
 
-    print("Hello World")
+    print("Starting Pomelo-MQTT-Client")
 
     # setup client
+    cfg = read_config("config_default.json")
+    topic_reg = cfg['topic_general'] + '/' + cfg['topic_reg']
+    topic_data = cfg['topic_general'] + '/' + cfg['topic_data']
     try:
-        
-        client = mqtt.Client(client_id=client_id)
+        client = mqtt.Client(client_id=cfg['client_id'])
+        client.topic_reg = topic_reg
         client.on_connect = on_connect
         client.on_publish = on_publish
     except BaseException as berr:
         print(berr)
+        logging.exception(berr)
 
     # connect
     try:
-        client.connect(broker_url, broker_port)
+        client.connect(cfg['broker_url'], cfg['broker_port'])
         client.loop_start()
     except BaseException as berr:
         print(berr)
+        logging.exception(berr)
 
     # do stuff
     try:
         for i in range(0, 3):
-            client.publish(topic, i)
+            client.publish(topic_data, i)
             sleep(0.5)
     except BaseException as berr:
         print(berr)
+        logging.exception(berr)
 
     sleep(2)
 
     # disconnect
-    client.disconnect()
-    client.loop_stop()
+    try:
+        client.disconnect()
+        client.loop_stop()
+    except BaseException as berr:
+        print(berr)
+        logging.exception(berr)
 
     # end
     print("exiting..")
