@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
-from time import sleep
-import paho.mqtt.client as mqtt
-import random
 import os
 import socket
 import logging
-
+# import time
+# import sys
+# import random
 import json
-import time
-import sys
 
-topic_reg = ''
-topic_data = ''
+from time import sleep
+import paho.mqtt.client as mqtt
+
 
 def on_connect(client, userdata, flags, rc):
     '''TODO: documentation'''
