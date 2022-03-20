@@ -37,6 +37,8 @@ def main():
     cfg = read_config("config_default.json")
     topic_reg = cfg['topic_general'] + '/' + cfg['topic_reg']
     topic_data = cfg['topic_general'] + '/' + cfg['topic_data']
+
+    print(cfg)
     try:
         client = mqtt.Client(client_id=cfg['client_id'])
         client.topic_reg = topic_reg
