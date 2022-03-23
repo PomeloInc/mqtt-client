@@ -1,64 +1,84 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
-from time import sleep
-import paho.mqtt.client as mqtt
-import random
 import os
 import socket
-import time
+import logging
+# import time
+# import sys
+# import random
+import json
 
-# def on_connect(client, userdata, flags, rc):
-# def publish(client):
-# def subscribe(client: mqtt_client):
-# def on_message(client, userdata, msg):
-# def on_message(client, userdata, msg):
+from time import sleep
+import paho.mqtt.client as mqtt
 
-# static stuff
-broker_url = "test.mosquitto.org"
-broker_port = 1883  
-client_id = f'python-mqtt-{random.randint(0, 1000)}'
-topic = "/pomelo/client_1"
+
+def on_connect(client, userdata, flags, rc):
+    '''TODO: documentation'''
+    print("Connected with result code "+str(rc))
+    client.publish(client.topic_reg, "Hello from " + os.getlogin() + "@" + socket.gethostname())
+
+def on_publish(client, userdata, msg):
+    '''TODO: documentation'''
+    print("DEBUG: published message")
+
+def read_config(path):
+    '''TODO: documentation'''
+    with open(path, encoding='UTF-8') as file:
+        cfg = json.load(file)
+    return cfg
 
 def main():
     """ Main program """
 
-    print("Hello World")
-
+    print("Starting Pomelo-MQTT-Client")
+    print("Hello Bitbake")
     # setup client
-    try:
-        
-        client = mqtt.Client(client_id=client_id)
-        client.connect(broker_url, broker_port)
+    cfg = read_config("config_default.json")
+    topic_reg = cfg['topic_general'] + '/' + cfg['topic_reg']
+    topic_data = cfg['topic_general'] + '/' + cfg['topic_data']
 
-        # client.publish(topic="TestingTopic", payload="TestingPayload", qos=0, retain=False)
-        # print("Sucessfully connected")
+    print(cfg)
+    try:
+        client = mqtt.Client(client_id=cfg['client_id'])
+        client.topic_reg = topic_reg
+        client.on_connect = on_connect
+        client.on_publish = on_publish
     except BaseException as berr:
         print(berr)
+        logging.exception(berr)
+
+    # connect
+    try:
+        client.connect(cfg['broker_url'], cfg['broker_port'])
+        client.loop_start()
+    except BaseException as berr:
+        print(berr)
+        logging.exception(berr)
 
     # do stuff
     try:
         for i in range(0, 3):
-            client.publish(topic, i)
+            client.publish(topic_data, i)
             sleep(0.5)
     except BaseException as berr:
         print(berr)
+        logging.exception(berr)
+
+    sleep(2)
 
     # disconnect
-    client.disconnect()
+    try:
+        client.disconnect()
+        client.loop_stop()
+    except BaseException as berr:
+        print(berr)
+        logging.exception(berr)
 
     # end
     print("exiting..")
-
     return 0
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.publish(topic, "Hello from " + os.getlogin() + "@" + socket.gethostname())
-
-def on_message(client, userdata, msg):
-    print("published message")
 
 if __name__ == "__main__":
     main()
