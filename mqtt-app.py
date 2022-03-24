@@ -7,6 +7,7 @@ TODO: DOCUMENT AND COPYRIGHT/LICENSE
 
 import logging
 from pom_classes.PomeloClient import PomeloClient
+from pom_classes.PomeloFlashClient import PomeloFlashClient
 
 # Debug
 from time import sleep
@@ -19,32 +20,46 @@ def main():
     print("Starting Pomelo-MQTT-Client")
 
     # setup client & connect
-    cfg = "config_default.json"
+    base_cfg = "template_config_base.json"
+    flash_cfg = 'template_config_flash.json'
     try:
-        pom_client = PomeloClient(cfg)
+        # test base client
+        pom_client = PomeloClient(base_cfg)
         pom_client.connect()
+        # test flash client
+        flash_client = PomeloFlashClient(flash_cfg)
+        flash_client.connect()
     except BaseException as berr:
         logging.exception(berr)
 
-    # do stuff (idle for now)
+    # registration
     try:
-        for i in range(0, 3):
-            pom_client.idle(i)
-            sleep(0.5)
+        # test base client
+        pom_client.register_client()
+        # test flash client
+        flash_client.register_client()
+    except BaseException as berr:
+        logging.exception(berr)
 
-            # TODO: debug
-            pom_client.send_command("build_server", "build_yocto")
+    # test functionality
+    try:
+        # base client
+        pom_client.idle("test_data")
+        pom_client.send_msg_client('build_server', 'perform_task')
 
+        # flash client
+        flash_client.flash_target("bbb_v0")
         
     except BaseException as berr:
         print(berr)
         logging.exception(berr)
 
-    sleep(2)
+    sleep(10)
 
     # disconnect
     try:
         pom_client.disconnect()
+        flash_client.disconnect()
     except BaseException as berr:
         logging.exception(berr)
     
