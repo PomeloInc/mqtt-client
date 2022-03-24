@@ -1,0 +1,11 @@
+
+def on_connect(client, userdata, flags, rc):
+    '''TODO: documentation'''
+    print("Connected with result code "+str(rc))
+    client.publish(client.topic_reg, "Hello from " + os.getlogin() + "@" + socket.gethostname())
+
+def on_publish(client, userdata, msg):
+    '''TODO: documentation'''
+    print("DEBUG: published message")
+
+
