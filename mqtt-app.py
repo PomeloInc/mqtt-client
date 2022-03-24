@@ -1,64 +1,58 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+TODO: DOCUMENT AND COPYRIGHT/LICENSE
+"""
 
-import sys
+
+import logging
+from pom_classes.PomeloClient import PomeloClient
+
+# Debug
 from time import sleep
-import paho.mqtt.client as mqtt
-import random
-import os
-import socket
-import time
 
-# def on_connect(client, userdata, flags, rc):
-# def publish(client):
-# def subscribe(client: mqtt_client):
-# def on_message(client, userdata, msg):
-# def on_message(client, userdata, msg):
-
-# static stuff
-broker_url = "test.mosquitto.org"
-broker_port = 1883  
-client_id = f'python-mqtt-{random.randint(0, 1000)}'
-topic = "/pomelo/client_1"
 
 def main():
     """ Main program """
 
-    print("Hello World")
+    # Hello
+    print("Starting Pomelo-MQTT-Client")
 
-    # setup client
+    # setup client & connect
+    cfg = "config_default.json"
     try:
-        
-        client = mqtt.Client(client_id=client_id)
-        client.connect(broker_url, broker_port)
-
-        # client.publish(topic="TestingTopic", payload="TestingPayload", qos=0, retain=False)
-        # print("Sucessfully connected")
+        pom_client = PomeloClient(cfg)
+        pom_client.connect()
     except BaseException as berr:
-        print(berr)
+        logging.exception(berr)
 
-    # do stuff
+    # do stuff (idle for now)
     try:
         for i in range(0, 3):
-            client.publish(topic, i)
+            pom_client.idle(i)
             sleep(0.5)
+
+            # TODO: debug
+            pom_client.send_command("build_server", "build_yocto")
+
+        
     except BaseException as berr:
         print(berr)
+        logging.exception(berr)
+
+    sleep(2)
 
     # disconnect
-    client.disconnect()
+    try:
+        pom_client.disconnect()
+    except BaseException as berr:
+        logging.exception(berr)
+    
 
     # end
     print("exiting..")
-
     return 0
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.publish(topic, "Hello from " + os.getlogin() + "@" + socket.gethostname())
-
-def on_message(client, userdata, msg):
-    print("published message")
 
 if __name__ == "__main__":
     main()

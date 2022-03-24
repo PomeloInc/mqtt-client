@@ -1,0 +1,12 @@
+{
+    "client_id" : "dev_client",
+    "broker" : {
+        "port" : 1883,
+        "url" : "test.mosquitto.org"
+    },
+    "topics" : {
+        "base" : "pomelo",
+        "reg" : "pomelo/registration",
+        "data" : "pomelo/data"
+    }
+}
