@@ -36,16 +36,19 @@ def on_publish(client, userdata, mid):
     '''TODO: documentation'''
     # print("DEBUG: Client '" + str(client.client_id) + "' published message: " + str(msg))
     print("DEBUG: Client published message: " + str(mid))
+    # TODO: CLIENTS SHOULD NOT BE ABLE TO SEND THEMSELVES COMMANDS
 
 # put in extra library
 def on_message(client, userdata, mid):
     '''TODO: documentation'''
     print("DEBUG: Client received message: " + str(mid.payload))
+    # TODO: CLIENTS SHOULD NOT BE ABLE TO RECEIVE COMMANDS FROM THEMSELVES 
 
 # put in extra library
 def on_subscribe(client, userdata, mid, granted_qos):
     '''TODO: documentation'''
     print("DEBUG: Client subscribed to topic: ")
+    # TODO: CLIENTS SHOULD SUBSCRIBE TO THEIR OWN CMD TOPIC
 
 class PomeloClient:
     # TODO: add inheritence logic, i.e. it should be possible to create sub-classes a'la "webapp-client, build-client etcpp."
