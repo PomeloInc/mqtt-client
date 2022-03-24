@@ -1,0 +1,14 @@
+{
+    "client_id" : "flash",
+    "client_type" : "worker",
+    "broker" : {
+        "port" : 1883,
+        "url" : "test.mosquitto.org"
+    },
+    "topics" : {
+        "base" : "pomelo",
+        "reg" : "pomelo/auth",
+        "data" : "pomelo/data",
+        "clients" : "pomelo/clients"
+    }
+}
