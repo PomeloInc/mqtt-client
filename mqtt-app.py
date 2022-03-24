@@ -40,7 +40,11 @@ def main():
     sleep(2)
 
     # disconnect
-    pom_client.disconnect()
+    try:
+        pom_client.disconnect()
+    except BaseException as berr:
+        logging.exception(berr)
+    
 
     # end
     print("exiting..")

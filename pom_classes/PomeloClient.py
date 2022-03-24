@@ -33,6 +33,8 @@ def on_publish(client, userdata, msg):
 
 class PomeloClient:
     # TODO: add inheritence logic, i.e. it should be possible to create sub-classes a'la "webapp-client, build-client etcpp."
+    """TODO: add documentation"""
+
     def __init__(self, cfg=None):
         """TODO: document"""
         try:
@@ -47,12 +49,23 @@ class PomeloClient:
     def __str__(self):
         """TODO: document"""
         return self.id
+
+    def send_command(self):
+        """TODO: document"""
+        # TODO implement logic to send a command to another client
+
+    def receive_command(self):
+        """TODO: document"""
+        # TODO: implement logic to receive a command
         
+    def work_task(self):
+        """TODO: document"""
+        # TODO: perform task
     
     def connect(self):
         """TODO: document"""
         try:
-            self.client.connect(self.cfg.boker, self.cfg.port)
+            self.client.connect(self.cfg.broker, self.cfg.port)
             self.client.loop_start()
         except BaseException as berr:
             return berr
@@ -65,11 +78,11 @@ class PomeloClient:
         except BaseException as berr:
             return berr
     
-    def loop(self, i):
+    def idle(self, i):
         """TODO: document"""
         try:
             print(self.cfg.topics['data'])
-            self.client.publish(self.cfg.topics['data'], i)
+            self.client.publish(self.cfg.topics['data'], i + 'Idle')
             sleep(0.5)
         except BaseException as berr:
             return berr
@@ -81,7 +94,7 @@ class PomeloClient:
             """TODO: document"""
             try:
                 self.id = id
-                self.boker = broker
+                self.broker = broker
                 self.port = port
                 self.topics = topics
                 self.client_secret = client_secret
@@ -90,4 +103,4 @@ class PomeloClient:
 
         def __str__(self):
             """TODO: document"""
-            return self.id + self.broker_addr
+            return self.id + self.broker
