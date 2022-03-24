@@ -1,8 +1,11 @@
 {
     "client_id" : "dev_client",
-    "topic_general" : "pomelo",
-    "topic_reg" : "registration",
-    "topic_data" : "data",
-    "broker_port" : 1883,
-    "broker_url" : "test.mosquitto.org"
+    "broker" : {
+        "port" : 1883,
+        "url" : "test.mosquitto.org"
+    },
+    "topics" : {
+        "reg" : "pomelo/registration",
+        "data" : "pomelo/data"
+    }
 }
