@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import json
 import socket
 import paho.mqtt.client as mqtt
@@ -22,14 +23,6 @@ def read_config(path):
         except BaseException as berr:
             return berr
 
-def on_connect(client, userdata, flags, rc):
-        '''TODO: documentation'''
-        print("Connected with result code "+str(rc))
-        client.publish("pomelo/registration", "Hello from " + os.getlogin() + "@" + socket.gethostname())
-
-def on_publish(client, userdata, msg):
-    '''TODO: documentation'''
-    print("DEBUG: published message")
 
 class PomeloClient:
     # TODO: add inheritence logic, i.e. it should be possible to create sub-classes a'la "webapp-client, build-client etcpp."
@@ -41,8 +34,8 @@ class PomeloClient:
             self.id = id
             self.cfg = read_config(cfg)
             self.client = mqtt.Client()
-            self.client.on_connect = on_connect
-            self.client.on_publish = on_publish
+            self.client.on_connect = self.on_connect
+            self.client.on_publish = self.on_publish
         except BaseException as berr:
             return berr
 
@@ -50,8 +43,14 @@ class PomeloClient:
         """TODO: document"""
         return self.id
 
-    def send_command(self):
+    def register(self):
         """TODO: document"""
+        self.client.publish(self.cfg.topics['reg'], "Hello from " + os.getlogin() + "@" + socket.gethostname())
+        # TODO implement logic to send a command to another client
+
+    def send_command(self, client, cmd):
+        """TODO: document"""
+        self.client.publish("pomelo/", "Hello from " + os.getlogin() + "@" + socket.gethostname())
         # TODO implement logic to send a command to another client
 
     def receive_command(self):
@@ -61,6 +60,20 @@ class PomeloClient:
     def work_task(self):
         """TODO: document"""
         # TODO: perform task
+
+    # debug
+    def on_connect(client, userdata, flags, rc):
+        '''TODO: documentation'''
+        print("DEBUG: Connected with result code "+str(rc))
+
+    # debug
+    def on_publish(client, userdata, msg):
+        '''TODO: documentation'''
+        print("DEBUG: published message: " + msg)
+
+    def on_message(client, userdata, msg):
+        '''TODO: documentation'''
+        print("DEBUG: published message: " + msg)
     
     def connect(self):
         """TODO: document"""
