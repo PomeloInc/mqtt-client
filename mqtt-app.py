@@ -20,19 +20,22 @@ def main():
 
     # setup client & connect
     cfg = "config_default.json"
-    
-    print(cfg)
     try:
         pom_client = PomeloClient(cfg)
         pom_client.connect()
     except BaseException as berr:
         logging.exception(berr)
 
-    # do stuff
+    # do stuff (idle for now)
     try:
         for i in range(0, 3):
-            pom_client.loop(i)
+            pom_client.idle(i)
             sleep(0.5)
+
+            # TODO: debug
+            pom_client.send_command("build_server", "build_yocto")
+
+        
     except BaseException as berr:
         print(berr)
         logging.exception(berr)
